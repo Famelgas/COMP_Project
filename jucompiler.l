@@ -14,6 +14,7 @@ RESERVED                            (length|main|new|System|this|Integer|null|--
 
 %%
 
+
 %X JAVADOC
 
 " "*"//"                            {BEGIN SINGLECOMM;}
@@ -77,6 +78,7 @@ RESERVED                            (length|main|new|System|this|Integer|null|--
 */ ; 
 // ;
 
+
 "/**" {BEGIN JAVADOC;}
 <JAVADOC>"@param".* {printf("\nParametro: %s", &yytext[6]);}
 <JAVADOC>"@return".* {printf("\nDevolve: %s", &yytext[7]);}
@@ -90,7 +92,6 @@ RESERVED                            (length|main|new|System|this|Integer|null|--
 \n ; //nao faz nada
 
 %%
-
 int main()
 {
 yylex(); return 0;
