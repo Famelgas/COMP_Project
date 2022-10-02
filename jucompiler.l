@@ -1,90 +1,11 @@
 %X JUC
 
-<<<<<<< HEAD
-id                              [a-zA-Z_][a-zA-Z_0-9]*
-BOOLLIT                         true|false
-STRLIT                          "([^"\\]|\\.)*"
-ASSIGN                          =
-PLUS                            +
-MINUS                           -
-COMMA                           ,
-SEMICOLON                       ;
-LPAR                            (
-RPAR                            )
-LBRACE                          {
-RBRACE                          }
-LSQ                             [
-RSQ                             ]
-DOT                             .
-COLON                           :
-STAR                            *
-DIV                             /
-MOD                             %
-AND                             &&
-OR                              ||
-NOT                             !
-LT                              <
-LE                              <=
-GT                              >
-GE                              >=
-EQ                              ==
-NE                              !=
-ARROW                           ->
-LSHIFT                          <<
-RSHIFT                          >>
-XOR                             ^
-MOD                             %
-BOOL                            boolean
-CLASS                           class
-DOTLENGTH                       .length
-DOUBLE                          double
-PRINT                           System.out.print
-PARSEINT                        Integer.parseInt
-IF                              if
-ELSE                            else
-WHILE                           while
-BREAK                           break
-CONTINUE                        continue
-RETURN                          return
-INT                             int
-STRING                          string
-VOID                            void
-CLASS                           class
-NULL                            null
-NEW                             new
-THIS                            this
-EXTENDS                         extends
-IMPLEMENTS                      implements
-PUBLIC                          public
-PRIVATE                         private
-PROTECTED                       protected
-STATIC                          static
-FINAL                           final
-ABSTRACT                        abstract
-NATIVE                          native
-THROWS                          throws
-TRY                             try
-CATCH                           catch
-FINALLY                         finally
-FOR                             for
-SWITCH                          switch
-CASE                            case
-DEFAULT                         default
-THROW                           throw
-IMPORT                          import
-
-
-
-
-
-=======
 ID                                  [a-zA-Z_][a-zA-Z_0-9]*
 INTLIT                              [1-9](("_")?{D})*|0(("_")?{O})*|0[xX](("_")?{H})+
 REALLIT                             {{D}(("_")?{D})*}"."{{D}(("_")?{D})*}?{[eE][+-]?{{D}(("_")?{D})*} }?|{{D}(("_")?{D})*}{[eE][+-]?{{D}(("_")?{D})*}}|"."{{D}(("_")?{D})*}{[eE][+-]?{{D}(("_")?{D})*}}? 
 BOOLLIT                             (true|false)
 STRLIT                              ("([^"\\]|\\.)*")
 RESERVED                            (length|main|new|System|this|Integer|null|--|++|for)
->>>>>>> ae616fc7e125a29086a3b237781e57f1cdb64bbb
 
 %{
     #include <stdio.h>
@@ -92,8 +13,7 @@ RESERVED                            (length|main|new|System|this|Integer|null|--
 %}
 
 %%
-<<<<<<< HEAD
-=======
+
 
 %X JAVADOC
 
@@ -158,7 +78,7 @@ RESERVED                            (length|main|new|System|this|Integer|null|--
 */ ; 
 // ;
 
->>>>>>> ae616fc7e125a29086a3b237781e57f1cdb64bbb
+
 "/**" {BEGIN JAVADOC;}
 <JAVADOC>"@param".* {printf("\nParametro: %s", &yytext[6]);}
 <JAVADOC>"@return".* {printf("\nDevolve: %s", &yytext[7]);}
@@ -170,13 +90,8 @@ RESERVED                            (length|main|new|System|this|Integer|null|--
 <JAVADOC>. ECHO;
 . ; //caso seja codigo Java
 \n ; //nao faz nada
-<<<<<<< HEAD
-%%
-=======
 
 %%
-
->>>>>>> ae616fc7e125a29086a3b237781e57f1cdb64bbb
 int main()
 {
 yylex(); return 0;
