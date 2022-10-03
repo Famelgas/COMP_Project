@@ -94,8 +94,9 @@ RESERVED                            (length|main|new|System|this|Integer|null|--
 %%
 int main()
 {
-yylex(); return 0;
+    yylex(); 
+    return 0;
 }
 int yywrap() {
-return 1;
+    return 1;
 }
