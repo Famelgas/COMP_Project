@@ -2,11 +2,12 @@ ID                                  [a-zA-Z_][a-zA-Z_0-9]*
 INTLIT                              [1-9](("_")?{D})*|0(("_")?{O})*|0[xX](("_")?{H})+
 REALLIT                             {{D}(("_")?{D})*}"."{{D}(("_")?{D})*}?{[eE][+-]?{{D}(("_")?{D})*} }?|{{D}(("_")?{D})*}{[eE][+-]?{{D}(("_")?{D})*}}|"."{{D}(("_")?{D})*}{[eE][+-]?{{D}(("_")?{D})*}}? 
 BOOLLIT                             (true|false)
-STRLIT                              ("([^"\\]|\\.)*")
 RESERVED                            (length|main|new|System|this|Integer|null|--|++|for)
 O                                   [0-7]
 H                                   [0-9A-Fa-f]
 D                                   [0-9]
+escape_sequence                     \n|\f|\r|\t|\\|\"
+newline                             \r\n|\n|\r
 
 
 %{
@@ -14,11 +15,18 @@ D                                   [0-9]
     #include <stdlib.h>
 %}
 
-%X JUC
+%X JUC STRLIT SINGLECOMM DOUBLECOMM
 %%
 
 " "*"//"                            {BEGIN SINGLECOMM;}
-" "*"/*"                            {BEGIN DOUBLECOMM;}   
+" "*"/*"                            {BEGIN DOUBLECOMM;}  
+
+<SINGLECOMM>{newline}               {BEGIN 0;}
+<DOUBLECOMM>"*/"                    {BEGIN 0;}
+<DOUBLECOMM>{newline} 
+
+
+
 
 "if"                                {printf("IF\n");}
 "else"                              {printf("ELSE\n");}
@@ -72,7 +80,6 @@ D                                   [0-9]
 
 
 {BOOLLIT}                           {printf("BOOLLIT(%s)\n", yytext);}
-{STRLIT}                            {printf("STRLIT(%s)\n", yytext);}
 {INTLIT}                            {printf("INTLIT(%s)\n", yytext);}
 {REALLIT}                           {printf("REALLIT(%s)\n", yytext);}
 {RESERVED}                          {printf("RESERVED(%s)\n"), yytext;}
