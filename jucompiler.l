@@ -1,21 +1,21 @@
-%X JUC
-
 ID                                  [a-zA-Z_][a-zA-Z_0-9]*
 INTLIT                              [1-9](("_")?{D})*|0(("_")?{O})*|0[xX](("_")?{H})+
 REALLIT                             {{D}(("_")?{D})*}"."{{D}(("_")?{D})*}?{[eE][+-]?{{D}(("_")?{D})*} }?|{{D}(("_")?{D})*}{[eE][+-]?{{D}(("_")?{D})*}}|"."{{D}(("_")?{D})*}{[eE][+-]?{{D}(("_")?{D})*}}? 
 BOOLLIT                             (true|false)
 STRLIT                              ("([^"\\]|\\.)*")
 RESERVED                            (length|main|new|System|this|Integer|null|--|++|for)
+O                                   [0-7]
+H                                   [0-9A-Fa-f]
+D                                   [0-9]
+
 
 %{
     #include <stdio.h>
     #include <stdlib.h>
 %}
 
+%X JUC
 %%
-
-
-%X JAVADOC
 
 " "*"//"                            {BEGIN SINGLECOMM;}
 " "*"/*"                            {BEGIN DOUBLECOMM;}   
@@ -66,32 +66,20 @@ RESERVED                            (length|main|new|System|this|Integer|null|--
 "double"                            {printf("DOUBLE\n");}
 "void"                              {printf("VOID\n");}
 
-
-{ID}                                {printf("ID(%s)\n", yytext);}
-{STRLIT}                            {printf("STRLIT(%s)\n", yytext); }
-{RESERVED}                          {printf("RESERVED(%s)\n"), yytext;}
-{INTLIT}                            {printf("INTLIT(%s)\n", yytext);}
-{BOOLIT}                            {printf("BOOLIT(%s)\n", yytext);}
-{REALLIT}                           {printf("REALLIT(%s)\n", yytext);}
-
 /* ;
 */ ; 
 // ;
 
 
-"/**" {BEGIN JAVADOC;}
-<JAVADOC>"@param".* {printf("\nParametro: %s", &yytext[6]);}
-<JAVADOC>"@return".* {printf("\nDevolve: %s", &yytext[7]);}
-<JAVADOC>"@see".* ; //ignorar
-<JAVADOC>"* "* ;
-<JAVADOC><p> {printf("\n");}
-<JAVADOC>"*/" {BEGIN 0; printf("\n");} //regressar ao normal
-<JAVADOC>\n ;
-<JAVADOC>. ECHO;
-. ; //caso seja codigo Java
-\n ; //nao faz nada
+{BOOLLIT}                           {printf("BOOLLIT(%s)\n", yytext);}
+{STRLIT}                            {printf("STRLIT(%s)\n", yytext);}
+{INTLIT}                            {printf("INTLIT(%s)\n", yytext);}
+{REALLIT}                           {printf("REALLIT(%s)\n", yytext);}
+{RESERVED}                          {printf("RESERVED(%s)\n"), yytext;}
+{ID}                                {printf("ID(%s)\n", yytext);}
 
 %%
+
 int main()
 {
     yylex(); 
