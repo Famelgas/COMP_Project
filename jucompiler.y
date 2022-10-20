@@ -20,7 +20,7 @@ void yyerror(char* s);
 
 
 %token <value> ID LPAR BOOL DOUBLE INT VOID STRLIT CLASS LBRACE ASSIGN RBRACE PARSEINT PUBLIC STATIC ELSE WHILE SEMICOLON RPAR STRING COMMA LSQ RSQ IF RETURN PRINT PLUS MINUS STAR DIV MOD AND OR XOR LSHIFT RSHIFT EQ GE GT LE LT NE NOT DOTLENGTH INTLIT REALLIT BOOLLIT 
-%type <node> Program Program2 MethodDecl FieldDecl FieldDecl2 Type MethodHeader FormalParams FormalParams2 MethodBody MethodBody2 VarDecl VarDecl2 Statement MethodInvocation MethodInvocation2 Assignment ParseArfs Expr
+%type <node> Program Program2 MethodDecl FieldDecl FieldDecl2 Type MethodHeader FormalParams FormalParams2 MethodBody MethodBody2 VarDecl VarDecl2 Statement MethodInvocation MethodInvocation2 Assignment ParseArgs Expr
 
 
 %%
