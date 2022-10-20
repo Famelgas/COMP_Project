@@ -25,20 +25,17 @@ void yyerror(char* s);
 
 %%
 
-int main () {
 
-}
+
+
 
 Program: CLASS ID LBRACE RBRACE
-    | CLASS ID LBRACE MethodDecl RBRACE
-    | CLASS ID LBRACE FieldDecl RBRACE
-    | CLASS ID LBRACE SEMICOLON RBRACE
-    | CLASS ID LBRACE MethodDecl FieldDecl RBRACE
-    | CLASS ID LBRACE MethodDecl SEMICOLON RBRACE
-    | CLASS ID LBRACE FieldDecl SEMICOLON RBRACE
-    | CLASS ID LBRACE FieldDecl MethodDecl RBRACE
-    | 
-    | CLASS ID LBRACE MethodDecl FieldDecl SEMICOLON RBRACE
+        |CLASS ID LBRACE Program2 RBRACE
+    ;
+
+Program2: MethodDecl
+        | FieldDecl
+        | SEMICOLON
     ;
 
 MethodDecl: PUBLIC STATIC MethodHeader MethodBody
