@@ -3,9 +3,19 @@
 #include <stdio.h>
 #include <string.h>
 #include "symtab.h"
+#include "stuctures.h"
+#include "functions.h"
+
 #define NSYMS 100
 
 symtab tab[NSYMS];
+
+node_t *myprogram; // root node
+node_t *temp; // temp node to use as an aux
+int error = 0; // error status flag
+symtab_t *global; // global table
+extern char *yytext;
+extern int flagT;
 
 symtab *symlook(char *varname);
 int yylex (void);
@@ -24,7 +34,7 @@ void yyerror(char* s);
 
 
 %%
-Program: CLASS ID LBRACE Program2 RBRACE
+Program: CLASS ID LBRACE Program2 RBRACE                           {Program(>=1) (Id { FieldDecl | MethodDecl } );}
     ;
 
 Program2: MethodDecl Program2
@@ -37,6 +47,7 @@ MethodDecl: PUBLIC STATIC MethodHeader MethodBody
     ;
 
 FieldDecl: PUBLIC STATIC Type ID FieldDecl2 SEMICOLON
+        | error SEMICOLON                                       {$$ = NULL; error = 1;}
     ;
 
 FieldDecl2: COMMA ID FieldDecl2
@@ -86,6 +97,7 @@ Statement: LBRACE Statement2 RBRACE
         | SEMICOLON 
         | PRINT LPAR Expr RPAR SEMICOLON 
         | PRINT LPAR STRLIT RPAR SEMICOLON 
+        | error SEMICOLON                                       {$$ = NULL; error = 1;}
     ;
 
 Statement2: Statement Statement2
@@ -94,6 +106,7 @@ Statement2: Statement Statement2
 
 MethodInvocation: ID LPAR RPAR
                 | ID LPAR Expr MethodInvocation2 RPAR
+                | ID LPAR error RPAR                           {$$ = NULL; error = 1;}
     ;
 
 MethodInvocation2:COMMA Expr MethodInvocation2
@@ -104,6 +117,8 @@ Assignment: ID ASSIGN Expr
         ;
 
 ParseArgs: PARSEINT LPAR ID LSQ Expr RSQ RPAR
+        | PARSEINT LPAR error RPAR                             {$$ = NULL; error = 1;}
+        ;
 
 Expr: Expr PLUS Expr
         | Expr MINUS Expr
@@ -133,4 +148,9 @@ Expr: Expr PLUS Expr
         | INTLIT 
         | REALLIT 
         | BOOLLIT
+        | LPAR error RPAR                                     {$$ = NULL; error = 1;}
     ;
+
+void yyerror ( char * s ) {
+    printf ( " Line ␣ %d , ␣ col ␣ %d : ␣ % s : ␣% s \n " , < num linha >, < num coluna > , s , yytext );
+}
