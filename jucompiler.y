@@ -37,30 +37,30 @@ void yyerror(char* s);
 Program: CLASS ID LBRACE Program2 RBRACE                           {Program(>=1) (Id { FieldDecl | MethodDecl } );}
     ;
 
-Program2: MethodDecl Program2
-        | FieldDecl Program2
-        | SEMICOLON Program2
-        |
+Program2: MethodDecl Program2                                   {Program2(>=1) (MethodDecl); } 
+        | FieldDecl Program2                                   {Program2(>=1) (FieldDecl); }
+        | SEMICOLON Program2                                  {Program2(>=1) (SEMICOLON); }
+        | /* empty */                                         {Program2(0) (); }
     ;
 
-MethodDecl: PUBLIC STATIC MethodHeader MethodBody
+MethodDecl: PUBLIC STATIC MethodHeader MethodBody            {MethodDecl(2) (PUBLIC, STATIC, MethodHeader, MethodBody); }
     ;
 
-FieldDecl: PUBLIC STATIC Type ID FieldDecl2 SEMICOLON
+FieldDecl: PUBLIC STATIC Type ID FieldDecl2 SEMICOLON     {FieldDecl(>=1) (PUBLIC, STATIC, Type, Id, FieldDecl2, SEMICOLON); }
         | error SEMICOLON                                       {$$ = NULL; error = 1;}
     ;
 
-FieldDecl2: COMMA ID FieldDecl2
-        |
+FieldDecl2: COMMA ID FieldDecl2                              {FieldDecl2(>=1) (COMMA, Id, FieldDecl2); }
+        | /* empty */                                         {FieldDecl2(0) (); }
     ;
 
-Type: BOOL | INT | DOUBLE
+Type: BOOL | INT | DOUBLE                                  {Type(1) ($1); }
     ;
     
-MethodHeader: VOID ID LPAR FormalParams RPAR
-        | Type ID LPAR FormalParams RPAR
-        | VOID ID LPAR RPAR
-        | Type ID LPAR RPAR
+MethodHeader: VOID ID LPAR FormalParams RPAR             {MethodHeader(3) (VOID, Id, LPAR, FormalParams, RPAR); }
+        | Type ID LPAR FormalParams RPAR                 {MethodHeader(3) (Type, Id, LPAR, FormalParams, RPAR); }
+        | VOID ID LPAR RPAR                              {MethodHeader(3) (VOID, Id, LPAR, RPAR); }
+        | Type ID LPAR RPAR                             {MethodHeader(3) (Type, Id, LPAR, RPAR); }
     ;
 
 FormalParams: Type ID FormalParams2
@@ -150,7 +150,8 @@ Expr: Expr PLUS Expr
         | BOOLLIT
         | LPAR error RPAR                                     {$$ = NULL; error = 1;}
     ;
-
+/*
 void yyerror ( char * s ) {
     printf ( " Line ␣ %d , ␣ col ␣ %d : ␣ % s : ␣% s \n " , < num linha >, < num coluna > , s , yytext );
 }
+*/
