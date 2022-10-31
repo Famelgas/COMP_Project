@@ -1,3 +1,10 @@
+%{
+/*
+Miguel Filipe de Andrade Sergio 2020225643
+Filipe David Amado Mendes 2020218797
+*/
+%}
+
 ID                                  ([a-z]|[A-Z]|"_"|"$")+([a-z]|[A-Z]|"_"|"$"|[0-9])*
 INTLIT		                        0|[1-9]+("_"*[0-9]|[0-9]*)*
 REALLIT                             (((("_"*)?[0-9]+)+"."?(("_"*)?[0-9]+)*)|((("_"*)?[0-9]+)*"."?(("_"*)?[0-9]+)+))[eE][+-]?(("_"*)?[0-9]+)+|(("_"*)?[0-9]+)*"."(("_"*)?[0-9]+)+|(("_"*)?[0-9]+)+"."(("_"*)?[0-9]+)*
@@ -116,4 +123,8 @@ int main(int argc, char **argv) {
 
 int yywrap() {
     return 1;
+}
+
+void yyerror ( char *s) {
+    printf (" Line  %d,  col  %d: %s: %s\n", <num linha >, <num coluna >, s, yytext );
 }

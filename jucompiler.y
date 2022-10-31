@@ -2,31 +2,12 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
-#include "symtab.h"
-#include "stuctures.h"
-#include "functions.h"
 
-#define NSYMS 100
+tree_t root;
 
-symtab tab[NSYMS];
-
-node_t *myprogram; // root node
-node_t *temp; // temp node to use as an aux
-int error = 0; // error status flag
-symtab_t *global; // global table
-extern char *yytext;
-extern int flagT;
-
-symtab *symlook(char *varname);
 int yylex (void);
-void yyerror(char* s);
+void yyerror (const char *s);
 %}
-
-
-%union {
-    node_t *node;
-    token_t *value;
-}
 
 
 %token <value> ID LPAR BOOL DOUBLE INT VOID STRLIT CLASS LBRACE ASSIGN RBRACE PARSEINT PUBLIC STATIC ELSE WHILE SEMICOLON RPAR STRING COMMA LSQ RSQ IF RETURN PRINT PLUS MINUS STAR DIV MOD AND OR XOR LSHIFT RSHIFT EQ GE GT LE LT NE NOT DOTLENGTH INTLIT REALLIT BOOLLIT 
@@ -34,7 +15,7 @@ void yyerror(char* s);
 
 
 %%
-Program: CLASS ID LBRACE Program2 RBRACE                           {Program(>=1) (Id { FieldDecl | MethodDecl } );}
+Program: CLASS ID LBRACE Program2 RBRACE                             {root = Program(>=1) (Id { FieldDecl | MethodDecl } );}
     ;
 
 Program2: MethodDecl Program2                                   {Program2(>=1) (MethodDecl); } 
@@ -54,7 +35,9 @@ FieldDecl2: COMMA ID FieldDecl2                              {FieldDecl2(>=1) (C
         | /* empty */                                         {FieldDecl2(0) (); }
     ;
 
-Type: BOOL | INT | DOUBLE
+Type: BOOL                                                 {Type(1) (BOOL); } 
+    | INT                                                 {Type(1) (INT); }
+    | DOUBLE                                          {Type(1) (DOUBLE); }
     ;
     
 MethodHeader: VOID ID LPAR FormalParams RPAR             {MethodHeader(3) (VOID, Id, LPAR, FormalParams, RPAR); }
@@ -64,18 +47,19 @@ MethodHeader: VOID ID LPAR FormalParams RPAR             {MethodHeader(3) (VOID,
     ;
 
 FormalParams: Type ID FormalParams2                     {FormalParams(>=1) (Type, Id, FormalParams2); }
-            | STRING LSQ RSQ ID                      
-    ;
-FormalParams2: COMMA Type ID FormalParams2 
-            | /* empty */                            
+            | STRING LSQ RSQ ID          {FormalParams(>=1) (STRING, LSQ, RSQ, Id); }                                       
     ;
 
-MethodBody: LBRACE MethodBody2 RBRACE     
+FormalParams2: COMMA Type ID FormalParams2        {FormalParams2(>=1) (COMMA, Type, Id, FormalParams2); }                  
+            | /* empty */                   {FormalParams2(0) (); }                                   
+    ;
+
+MethodBody: LBRACE MethodBody2 RBRACE               {MethodBody(3) (LBRACE, MethodBody2, RBRACE); }     
     ;
 
 MethodBody2: Statement MethodBody2              {MethodBody2(>=1) (Statement, MethodBody2); }
             | VarDecl MethodBody2                 {MethodBody2(>=1) (VarDecl, MethodBody2); }
-            | /* empty */                        
+            | /* empty */                       {MethodBody2(0) (); }                   
     ;
 
 VarDecl: Type ID VarDecl2 SEMICOLON            {VarDecl(>=1) (Type, Id, VarDecl2, SEMICOLON); }
@@ -150,8 +134,4 @@ Expr: Expr PLUS Expr        {Expr(3) (Expr, PLUS, Expr); }
         | BOOLLIT   {Expr(1) (BOOLLIT); }
         | LPAR error RPAR                                     {$$ = NULL; error = 1;}
     ;
-/*
-void yyerror ( char * s ) {
-    printf ( " Line ␣ %d , ␣ col ␣ %d : ␣ % s : ␣% s \n " , < num linha >, < num coluna > , s , yytext );
-}
-*/
+%%
