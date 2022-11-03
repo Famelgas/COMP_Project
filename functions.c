@@ -1,151 +1,95 @@
-#include "structures.h"
 #include "functions.h"
-#include <stdlib.h>
-#include <string.h>
-#include <stdio.h>
 
-node_t *create_node(char *symbol, int line, int column){
+// --------------------------------------------------------------------------------------------------------------------------
 
-    node_t *n = (node_t *)malloc(sizeof(node_t));
-    token_t *t = (token_t *)malloc(sizeof(token_t));
+node_t create_node(node_type type, char *value, char *symbol){
 
-    t->symbol = symbol;
-    n->noted_type = NULL;
-    n->children = NULL;
-    n->next = NULL;
-    n->token = t;
-    n->literal = 0;
-    n->line = line;
-    n->column = column;
-    n->isCallFunction = 0;
+    node_t new = malloc(sizeof(node_t));
+    new->symbol = (char *)malloc(1 + strlen(symbol) * sizeof(char));
+    new->value = (char *)malloc(1 + strlen(value) * sizeof(char));
 
-    return n;
+    strcpy(new->symbol, symbol);
+    new->parent = NULL;
+    new->child = NULL;
+    new->brother = NULL;
+    new->num_node = 0;
+    strcpy(new->value, value);
+    new->symbol = symbol;
+    new->type = type;
+
+
+    return new;
 }
 
-void add_child(node_t *father, node_t *child){
+// --------------------------------------------------------------------------------------------------------------------------
+// Adicionar filho
 
-    if (father->children == NULL)
-    {
-        // create the first child
-        father->children = child;
+void add_child(node_t parent, node_t child){
+    if (parent->child == NULL){
+        parent->child = child;
     }
-    else
-    {
-        // append to the child list
-        node_t *last_child = father->children;
-        for (; last_child->next != NULL; last_child = last_child->next)
+    else{
+        node_t last_child;
+        last_child = parent->child;
+        for (; last_child->brother != NULL; last_child = last_child->brother)
             ;
-        last_child->next = child;
+        last_child->brother = child;
     }
 }
 
-void add_next(node_t *node, node_t *next){
+// --------------------------------------------------------------------------------------------------------------------------
+// Adicionar irmão
 
+void add_next(node_t node, node_t next){
     if (node == NULL || next == NULL)
         return;
-
-    for (; node->next != NULL; node = node->next)
-        ; // last brother
-
-    node->next = next;
-}
-
-is_program *insert_program(is_vardec_list *ivl, is_statement_list *isl)
-{
-    is_program *ip = (is_program *)malloc(sizeof(is_program));
-
-    ip->vlist = ivl;
-    ip->slist = isl;
-
-    return ip;
-}
-
-is_vardec_list *insert_vardec_list(is_vardec_list *head, is_vardec *iv)
-{
-    is_vardec_list *ivl = (is_vardec_list *)malloc(sizeof(is_vardec_list));
-    is_vardec_list *tmp;
-
-    ivl->val = iv;
-    ivl->next = NULL;
-
-    if (head == NULL)
-        return ivl;
-
-    for (tmp = head; tmp->next; tmp = tmp->next)
+    for (; node->child != NULL; node = node->child)
         ;
-    tmp->next = ivl;
-
-    return head;
+    node->child = next;
 }
 
-is_vardec *insert_integer_dec(char *id)
-{
-    is_vardec *iv = (is_vardec *)malloc(sizeof(is_vardec));
-    is_integer_dec *iid = (is_integer_dec *)malloc(sizeof(is_integer_dec));
+// --------------------------------------------------------------------------------------------------------------------------
 
-    iid->id = (char *)strdup(id); /* Por precaucao. Seria apenas necessario copiar o ponteiro, pois o strdup ja foi feito atras*/
-    iv->disc_d = d_integer;
-    iv->data_vardec.u_integer_dec = iid;
-
-    // printf("Inserted a new integer var: %s\n", iv->data_vardec.u_integer_dec->id);
-
-    return iv;
+int count_children(node_t root){
+    int count = 0;
+    node_t aux;
+    aux = root;
+    while (aux != NULL){
+        aux = aux->child;
+        count++;
+    }
+    return count;
 }
 
-is_vardec *insert_character_dec(char *id)
-{
-    is_vardec *iv = (is_vardec *)malloc(sizeof(is_vardec));
-    is_character_dec *icd = (is_character_dec *)malloc(sizeof(is_character_dec));
-
-    icd->id = (char *)strdup(id); /* Por precaucao. Seria apenas necessario copiar o ponteiro, pois o strdup ja foi feito atras*/
-    iv->disc_d = d_character;
-    iv->data_vardec.u_character_dec = icd;
-
-    // printf("Inserted a new char var: %s\n", iv->data_vardec.u_character_dec->id);
-
-    return iv;
-}
-
-is_vardec *insert_double_dec(char *id)
-{
-    is_vardec *iv = (is_vardec *)malloc(sizeof(is_vardec));
-    is_double_dec *idd = (is_double_dec *)malloc(sizeof(is_double_dec));
-
-    idd->id = (char *)strdup(id); /* Por precaucao. Seria apenas necessario copiar o ponteiro, pois o strdup ja foi feito atras*/
-    iv->disc_d = d_double;
-    iv->data_vardec.u_double_dec = idd;
-
-    // printf("Inserted a new double var: %s\n", iv->data_vardec.u_double_dec->id);
-
-    return iv;
-}
-
-is_statement_list *insert_statement_list(is_statement_list *head, is_statement *is)
-{
-    is_statement_list *isl = (is_statement_list *)malloc(sizeof(is_statement_list));
-    is_statement_list *tmp;
-
-    isl->val = is;
-    isl->next = NULL;
-
-    if (head == NULL)
-        return isl;
-
-    for (tmp = head; tmp->next; tmp = tmp->next)
-        ;
-    tmp->next = isl;
-
-    return head;
-}
-
-is_statement *insert_write_statement(char *id)
-{
-    is_statement *is = (is_statement *)malloc(sizeof(is_statement));
-    is_write_statement *iws = (is_write_statement *)malloc(sizeof(is_write_statement));
-
-    iws->id = (char *)strdup(id);
-    is->disc_d = d_write;
-    is->data_statement.u_write_statement = iws;
-
-    return is;
+void print_tree(node_t root, int points){
+    int i = 0;
+    node_t aux;
+    if (root == NULL){
+        return;
+    }
+    if (root->type == node_root){
+        printf("%s\n", &root->symbol);
+    }
+    else{
+        while (i < points){
+            printf("..");
+            i++;
+        }
+        if (strcmp(root->value, "") != 0){
+            printf("%s(%s)\n", root->symbol, root->value);
+        }
+        else{
+            printf("%s\n", root->symbol);
+        }
+    }
+    aux = root->child;
+    while (aux != NULL){
+        node_t aux_free;
+        aux_free = aux;
+        print_tree(aux, points + 1);
+        aux = aux->brother;
+        free(aux_free->value);
+        free(aux_free->symbol);
+        free(aux_free);
+    }
 }
