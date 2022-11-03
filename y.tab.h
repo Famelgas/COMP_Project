@@ -144,7 +144,7 @@
 
 #if ! defined YYSTYPE && ! defined YYSTYPE_IS_DECLARED
 typedef union YYSTYPE
-#line 5 "jucompiler.y"
+#line 7 "jucompiler.y"
 {
 	char * id;
 	struct node * node;

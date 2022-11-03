@@ -823,11 +823,11 @@ Filipe David Amado Mendes 2020218797
 	#include "y.tab.h"
 
     int line = 1, column = 1;
-    int flag = 0;
     int column_aux = 1;
     int line_aux = 1;
     char * buffer;
     bool buffer_flag = true; 
+	int flag = 0;
 	extern int flag_error;
 #line 832 "lex.yy.c"
 

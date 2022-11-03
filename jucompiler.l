@@ -25,16 +25,16 @@ RESERVED                            "--"|"++"|"Integer"|"System"|"null"|"abstrac
 	#include "y.tab.h"
 
     int line = 1, column = 1;
-    int flag = 0;
     int column_aux = 1;
     int line_aux = 1;
     char * buffer;
     bool buffer_flag = true; 
+	int flag = 0;
 	extern int flag_error;
 %}
 
 
-%X SINGLECOMM MULTPLECOMM STRLIT
+%X SINGLECOMM MULTPLECOMM SLIT
 %%
 
 "//"                                {BEGIN SINGLECOMM;}
@@ -48,13 +48,19 @@ RESERVED                            "--"|"++"|"Integer"|"System"|"null"|"abstrac
 <MULTPLECOMM>.                      {column += yyleng;}
 
 \"                                  {buffer=yytext; line_aux =  line; column_aux = column; column += yyleng; buffer_flag = true;  BEGIN STRLIT;}
-<STRLIT>{NEWLINE}                   {column=1; printf("Line %d, col %d: unterminated string literal\n",  line, column_aux); line++; column = 1;  BEGIN 0;}
-<STRLIT>({CHAR}|{ESCAPE})*          {column += yyleng;}
-<STRLIT>\\{NEWLINE}                 {printf("Line %d, col %d: invalid escape sequence (\\)\nLine %d, col %d: unterminated string literal\n", line, column, line, column_aux); column = 1; line++; buffer_flag = false; BEGIN 0;}
-<STRLIT>\\                          {printf("Line %d, col %d: invalid escape sequence (\\)\n", line, column); column += yyleng; buffer_flag = false; }
-<STRLIT>\\.                         {printf("Line %d, col %d: invalid escape sequence (%s)\n",  line, column, yytext); column += yyleng; buffer_flag = false; }
-<STRLIT>\"                          {column += yyleng; if (buffer_flag && flag) {printf("STRLIT(%s)\n", buffer); buffer_flag = true; } BEGIN 0;}
-<STRLIT><<EOF>>                     {printf("Line %d, col %d: unterminated string literal\n",  line, column_aux); exit(0);}
+<SLIT>{NEWLINE}                   {column=1; printf("Line %d, col %d: unterminated string literal\n",  line, column_aux); line++; column = 1;  BEGIN 0;}
+<SLIT>({CHAR}|{ESCAPE})*          {column += yyleng;}
+<SLIT>\\{NEWLINE}                 {printf("Line %d, col %d: invalid escape sequence (\\)\nLine %d, col %d: unterminated string literal\n", line, column, line, column_aux); column = 1; line++; buffer_flag = false; BEGIN 0;}
+<SLIT>\\                          {printf("Line %d, col %d: invalid escape sequence (\\)\n", line, column); column += yyleng; buffer_flag = false; }
+<SLIT>\\.                         {printf("Line %d, col %d: invalid escape sequence (%s)\n",  line, column, yytext); column += yyleng; buffer_flag = false; }
+<SLIT>\"                          {column += yyleng; if (buffer_flag && flag) {printf("STRLIT(%s)\n", buffer); buffer_flag = true; } BEGIN 0;
+										if(flag != 1 && flag_error == 0) {
+											yylval.id = strdup(buffer);
+											yytext = buffer;
+											return STRLIT;
+										}
+									}
+<SLIT><<EOF>>                     {printf("Line %d, col %d: unterminated string literal\n",  line, column_aux); exit(0);}
 
 "false"                             {if (flag) printf("BOOLLIT(false)\n"); column += yyleng; 
 										if(flag != 1){

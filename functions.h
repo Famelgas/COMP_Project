@@ -34,8 +34,6 @@ typedef struct node {
 
 node_t root;
 node_t aux;
-int flag_errorr = 0;
-int flag;
 
 node_t create_node(node_type type, char *value, char *symbol);
 void add_child(node_t parent, node_t child); 
