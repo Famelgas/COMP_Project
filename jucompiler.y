@@ -218,7 +218,13 @@ MethodInvocation2:	Expr MethodInvocation3						            {$$ = $1; add_next($$
 				|	/* empty */										        {$$ = NULL;}
 				;
 
-MethodInvocation3:	Expr MethodInvocation3						            {$$ = $1; add_next($$, $2);}
+MethodInvocation3:	COMMA Expr MethodInvocation3						    {if($2!=NULL) {
+                                                                                $$=$2; 
+                                                                                add_next($$, $3);
+                                                                            }
+                                                                            else {
+                                                                                $$=$2;
+                                                                            }}
 				|	/* empty */										        {$$ = NULL;}
 				;
 
@@ -230,33 +236,29 @@ ParseArgs: PARSEINT LPAR ID LSQ Expr RSQ RPAR                               {$$ 
         | PARSEINT LPAR error RPAR                                          {$$ = NULL; flag_error = 1;}
         ;
 
-Expr5: Expr2                                                                {$$ = $1;}
-    |	/* empty */										                    {$$ = NULL;}
-    ;
-
 Expr: Assignment                                                            {$$ = $1;}
     | Expr2                                                                 {$$ = $1;}
     ;
 
-Expr2: Expr2 PLUS Expr2                                                        {$$ = create_node(node_operators, "", "Add"); add_child($$, $1); add_next($1, $3);}
-        | Expr2 MINUS Expr                                                   {$$ = create_node(node_operators, "", "Sub"); add_child($$, $1); add_next($1, $3);}
-        | Expr2 STAR Expr                                                    {$$ = create_node(node_operators, "", "Mul"); add_child($$, $1); add_next($1, $3);}
-        | Expr2 DIV Expr                                                     {$$ = create_node(node_operators, "", "Div"); add_child($$, $1); add_next($1, $3);}
-        | Expr2 MOD Expr                                                     {$$ = create_node(node_operators, "", "Mod"); add_child($$, $1); add_next($1, $3);}
-        | Expr2 AND Expr                                                     {$$ = create_node(node_operators, "", "And"); add_child($$, $1); add_next($1, $3);}
-        | Expr2 OR Expr                                                      {$$ = create_node(node_operators, "", "Or"); add_child($$, $1); add_next($1, $3);}
-        | Expr2 XOR Expr                                                     {$$ = create_node(node_operators, "", "Xor"); add_child($$, $1); add_next($1, $3);}
-        | Expr2 LSHIFT Expr                                                  {$$ = create_node(node_operators, "", "Lshift"); add_child($$, $1); add_next($1, $3);}
-        | Expr2 RSHIFT Expr                                                  {$$ = create_node(node_operators, "", "Rshift"); add_child($$, $1); add_next($1, $3);}
-        | Expr2 EQ Expr                                                      {$$ = create_node(node_operators, "", "Eq"); add_child($$, $1); add_next($1, $3);}
-        | Expr2 GE Expr                                                      {$$ = create_node(node_operators, "", "Ge"); add_child($$, $1); add_next($1, $3);}
-        | Expr2 GT Expr                                                      {$$ = create_node(node_operators, "", "Gt"); add_child($$, $1); add_next($1, $3);}
-        | Expr2 LE Expr                                                      {$$ = create_node(node_operators, "", "Le"); add_child($$, $1); add_next($1, $3);}
-        | Expr2 LT Expr                                                      {$$ = create_node(node_operators, "", "Lt"); add_child($$, $1); add_next($1, $3);}
-        | Expr2 NE Expr                                                      {$$ = create_node(node_operators, "", "Ne"); add_child($$, $1); add_next($1, $3);}
-        | MINUS Expr2 %prec UNARY                                            {$$ = create_node(node_operators, "", "Minus"); add_child($$, $2);}  
-        | PLUS Expr2 %prec UNARY                                             {$$ = create_node(node_operators, "", "Plus"); add_child($$, $2);}
-        | NOT Expr2 %prec UNARY                                              {$$ = create_node(node_operators, "", "Not"); add_child($$, $2);}
+Expr2: Expr2 PLUS Expr2                                                     {$$ = create_node(node_operators, "", "Add"); add_child($$, $1); add_next($1, $3);}
+        | Expr2 MINUS Expr2                                                 {$$ = create_node(node_operators, "", "Sub"); add_child($$, $1); add_next($1, $3);}
+        | Expr2 STAR Expr2                                                  {$$ = create_node(node_operators, "", "Mul"); add_child($$, $1); add_next($1, $3);}
+        | Expr2 DIV Expr2                                                   {$$ = create_node(node_operators, "", "Div"); add_child($$, $1); add_next($1, $3);}
+        | Expr2 MOD Expr2                                                   {$$ = create_node(node_operators, "", "Mod"); add_child($$, $1); add_next($1, $3);}
+        | Expr2 AND Expr2                                                   {$$ = create_node(node_operators, "", "And"); add_child($$, $1); add_next($1, $3);}
+        | Expr2 OR Expr2                                                    {$$ = create_node(node_operators, "", "Or"); add_child($$, $1); add_next($1, $3);}
+        | Expr2 XOR Expr2                                                   {$$ = create_node(node_operators, "", "Xor"); add_child($$, $1); add_next($1, $3);}
+        | Expr2 LSHIFT Expr2                                                {$$ = create_node(node_operators, "", "Lshift"); add_child($$, $1); add_next($1, $3);}
+        | Expr2 RSHIFT Expr2                                                {$$ = create_node(node_operators, "", "Rshift"); add_child($$, $1); add_next($1, $3);}
+        | Expr2 EQ Expr2                                                    {$$ = create_node(node_operators, "", "Eq"); add_child($$, $1); add_next($1, $3);}
+        | Expr2 GE Expr2                                                    {$$ = create_node(node_operators, "", "Ge"); add_child($$, $1); add_next($1, $3);}
+        | Expr2 GT Expr2                                                    {$$ = create_node(node_operators, "", "Gt"); add_child($$, $1); add_next($1, $3);}
+        | Expr2 LE Expr2                                                    {$$ = create_node(node_operators, "", "Le"); add_child($$, $1); add_next($1, $3);}
+        | Expr2 LT Expr2                                                    {$$ = create_node(node_operators, "", "Lt"); add_child($$, $1); add_next($1, $3);}
+        | Expr2 NE Expr2                                                    {$$ = create_node(node_operators, "", "Ne"); add_child($$, $1); add_next($1, $3);}
+        | MINUS Expr2 %prec UNARY                                           {$$ = create_node(node_operators, "", "Minus"); add_child($$, $2);}  
+        | PLUS Expr2 %prec UNARY                                            {$$ = create_node(node_operators, "", "Plus"); add_child($$, $2);}
+        | NOT Expr2 %prec UNARY                                             {$$ = create_node(node_operators, "", "Not"); add_child($$, $2);}
         | LPAR Expr RPAR                                                    {$$ = $2;}
         | LPAR error RPAR                                                   {$$ = NULL; flag_error = 1;}
         | Expr3												                {$$ = $1;}

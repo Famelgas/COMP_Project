@@ -153,7 +153,6 @@ int main(int argc, char *argv[]) {
 	if (argc > 1) {
 		if (strcmp(argv[1],"-l") == 0) {
 			flag = 1;
-			yylex();
 		}
 		else if (strcmp(argv[1],"-t") == 0) {
 			flag = 2;
