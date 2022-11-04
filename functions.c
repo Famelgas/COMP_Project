@@ -68,7 +68,7 @@ void print_tree(node_t root, int points){
         return;
     }
     if (root->type == node_root){
-        printf("%s\n", &root->symbol);
+        printf("%s\n", root->symbol);
     }
     else{
         while (i < points){
