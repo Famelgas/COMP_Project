@@ -31,6 +31,8 @@ RESERVED                            "--"|"++"|"Integer"|"System"|"null"|"abstrac
     bool buffer_flag = true; 
 	int flag = 0;
 	extern int flag_error;
+
+	int yyparse(void);
 %}
 
 
