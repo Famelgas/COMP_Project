@@ -1,3 +1,4 @@
 all:
-	flex -t jucompiler.l < Factorial.java
+	flex  jucompiler.l
 	yacc -d jucompiler.y
+	cc -o jucompiler *.c

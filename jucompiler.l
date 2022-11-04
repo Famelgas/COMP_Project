@@ -11,7 +11,7 @@ REALLIT                             (((("_"*)?[0-9]+)+"."?(("_"*)?[0-9]+)*)|((("
 CHAR                                [^\r\n\"\\]
 ESCAPE                              \\t|\\n|\\f|\\r|\\\"|\\\\
 SPACE                               \t|" "
-NEWLINE                             \r\n|\n|\r
+NEWLINE                             \n|\r|(\r\n)	
 RESERVED                            "--"|"++"|"Integer"|"System"|"null"|"abstract"|"assert"|"break"|"byte"|"case"|"catch"|"char"|"const"|"continue"|"default"|"do"|"enum"|"extends"|"final"|"finally"|"float"|"for"|"goto"|"implements"|"import"|"instanceof"|"interface"|"long"|"native"|"new"|"package"|"private"|"protected"|"short"|"strictfp"|"super"|"switch"|"synchronized"|"this"|"throw"|"throws"|"transient"|"try"|"volatile"
 
 
@@ -47,7 +47,7 @@ RESERVED                            "--"|"++"|"Integer"|"System"|"null"|"abstrac
 <MULTPLECOMM>{NEWLINE}              {line++; column = 1;}
 <MULTPLECOMM>.                      {column += yyleng;}
 
-\"                                  {buffer=yytext; line_aux =  line; column_aux = column; column += yyleng; buffer_flag = true;  BEGIN STRLIT;}
+\"                                {buffer=yytext; line_aux =  line; column_aux = column; column += yyleng; buffer_flag = true;  BEGIN STRLIT;}
 <SLIT>{NEWLINE}                   {column=1; printf("Line %d, col %d: unterminated string literal\n",  line, column_aux); line++; column = 1;  BEGIN 0;}
 <SLIT>({CHAR}|{ESCAPE})*          {column += yyleng;}
 <SLIT>\\{NEWLINE}                 {printf("Line %d, col %d: invalid escape sequence (\\)\nLine %d, col %d: unterminated string literal\n", line, column, line, column_aux); column = 1; line++; buffer_flag = false; BEGIN 0;}
@@ -118,9 +118,11 @@ RESERVED                            "--"|"++"|"Integer"|"System"|"null"|"abstrac
 "while"                             {if (flag) printf("WHILE\n"); column += yyleng; if(flag != 1) return WHILE; }
 
 {RESERVED}                          {if (flag) printf("RESERVED(%s)\n", yytext); column += yyleng;}
+
 {SPACE}                             {column += yyleng;}
 "\f"                                {column += yyleng;}
 {NEWLINE}                           {line++; column = 1;}
+
 {ID}                                {if (flag) printf("ID(%s)\n", yytext); column += yyleng; }
 {INTLIT}                            {if (flag) printf("INTLIT(%s)\n", yytext); column += yyleng;
 										if(flag != 1) {
@@ -170,11 +172,5 @@ int main(int argc, char *argv[]) {
 			yyparse();
 			yylex();
 		}
-	}
-	else {
-		flag = 0;
-		flag_error = 1;
-		yyparse();
-		yylex();
 	}
 }

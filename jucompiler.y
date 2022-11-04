@@ -2,6 +2,8 @@
     #include "functions.h"
     extern int flag;
     int flag_error = 0;
+    node_t root;
+    node_t aux;
 %}
 
 %union {
@@ -35,15 +37,17 @@
 %right ELSE
 
 %%
-Program: CLASS ID LBRACE Program2 RBRACE                                    {$$ = root = create_node(node_root, "", "Program");aux = create_node(node_id, $2, "Id"); add_child(root, aux); add_next(aux, $4);
-                                                                                if (flag && !flag_error) {
+
+Program: CLASS ID LBRACE Program2 RBRACE                                    {root = create_node(node_root, "", "Program");aux = create_node(node_id, $2, "Id"); add_child(root, aux); add_next(aux, $4);
+                                                                                $$ = root;
+                                                                                if (flag == 2 && flag_error == 0) {
                                                                                     print_tree($$, 0);
                                                                                 }
                                                                             }
     ;       
 
-Program2: FieldDecl Program2                                                {$$ = $1; add_next($$, $2);}
-        | MethodDecl Program2   							                {$$ = $1; add_next($$, $2);}
+Program2: MethodDecl Program2   							                {$$ = $1; add_next($$, $2);}
+        | FieldDecl Program2                                                {$$ = $1; add_next($$, $2);} 
         | SEMICOLON Program2                                                {$$ = $2;}
         | /* empty */                                                       {$$ = NULL;}
     ;
