@@ -11,8 +11,8 @@ REALLIT                             (((("_"*)?[0-9]+)+"."?(("_"*)?[0-9]+)*)|((("
 CHAR                                [^\r\n\"\\]
 ESCAPE                              \\t|\\n|\\f|\\r|\\\"|\\\\
 SPACE                               \t|" "
-NEWLINE                             \n|\r|(\r\n)	
-RESERVED                            "--"|"++"|"Integer"|"System"|"null"|"abstract"|"assert"|"break"|"byte"|"case"|"catch"|"char"|"const"|"continue"|"default"|"do"|"enum"|"extends"|"final"|"finally"|"float"|"for"|"goto"|"implements"|"import"|"instanceof"|"interface"|"long"|"native"|"new"|"package"|"private"|"protected"|"short"|"strictfp"|"super"|"switch"|"synchronized"|"this"|"throw"|"throws"|"transient"|"try"|"volatile"
+NEWLINE                             \r\n|\n|\r
+RESERVED                            "--"|"++"|"Integer"|"System"|"null"|"abstract"|"assert"|"break"|"byte"|"case"|"catch"|"char"|"const"|"continue"|"default"|"do"|"enum"|"extends"|"final"|"finally"|"float"|"for"|"goto"|"implements"|"import"|"instanceof"|"interface"|"long"|"native"|"new"|"package"|"private"|"protected"|"short"|"strictfp"|"super"|"switch"|"synchronized"|"this"|"throw"|"throws"|"transient"|"try"|"volatile"|"various"
 
 
 %{
@@ -119,8 +119,8 @@ RESERVED                            "--"|"++"|"Integer"|"System"|"null"|"abstrac
 
 {RESERVED}                          {if (flag) printf("RESERVED(%s)\n", yytext); column += yyleng;}
 
-{SPACE}                             {column += yyleng;}
-"\f"                                {column += yyleng;}
+{SPACE}                             {column += yyleng; }
+"\f"                                {column += yyleng; }
 {NEWLINE}                           {line++; column = 1;}
 
 {ID}                                {if (flag) printf("ID(%s)\n", yytext); column += yyleng; }
@@ -155,8 +155,10 @@ int main(int argc, char *argv[]) {
 	if (argc > 1) {
 		if (strcmp(argv[1],"-l") == 0) {
 			flag = 1;
+			yyparse();
 		}
 		else if (strcmp(argv[1],"-t") == 0) {
+			// análise lexical, análise sintatica e PRINT TREE
 			flag = 2;
 			yyparse();
 		}
