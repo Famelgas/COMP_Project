@@ -16,11 +16,7 @@ RESERVED                            "--"|"++"|"Integer"|"System"|"null"|"abstrac
 
 
 %{
-    #include <stdio.h>
-    #include <stdlib.h>
     #include <stdbool.h>
-	#include <string.h>
-	#include <stdarg.h>
     #include "functions.h"
 	#include "y.tab.h"
 
