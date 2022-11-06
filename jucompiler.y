@@ -151,8 +151,9 @@ Statement:	LBRACE Statement2 RBRACE								        {if (count_children($2) > 1) 
                                                                                     add_next($5, aux);
                                                                                 }
                                                                                 else {
-                                                                                    add_next($3, $5);
-                                                                                    add_next($5, aux);
+                                                                                    add_next($3, aux);
+                                                                                    add_child(aux, $5);
+                                                                                    add_next(aux, create_node(node_statements, "", "Block"));
                                                                                 }
                                                                             }
         |	IF LPAR Expr RPAR Statement ELSE Statement				        {$$ = create_node(node_statements, "", "If");
