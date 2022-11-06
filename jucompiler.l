@@ -25,6 +25,8 @@ BOOLS				                "true"|"false"
     int buffer_flag = 0; 
 	int flag = 0;
 	extern int flag_error;
+
+	int yyparse(void);
 %}
 
 
