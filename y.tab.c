@@ -63,8 +63,48 @@
 /* Pull parsers.  */
 #define YYPULL 1
 
+<<<<<<< HEAD
+=======
+
+>>>>>>> 7e1369869c88a24f9e8be2d8b882a0120beeee07
 
 
+/* First part of user prologue.  */
+#line 1 "jucompiler.y"
+
+    /*
+    Miguel Filipe de Andrade Sergio 2020225643
+    Filipe David Amado Mendes 2020218797
+    */
+
+    #include "functions.h"
+    extern int flag;
+    int flag_error = 0;
+    node_t root;
+    node_t aux;
+
+#line 84 "y.tab.c"
+
+# ifndef YY_CAST
+#  ifdef __cplusplus
+#   define YY_CAST(Type, Val) static_cast<Type> (Val)
+#   define YY_REINTERPRET_CAST(Type, Val) reinterpret_cast<Type> (Val)
+#  else
+#   define YY_CAST(Type, Val) ((Type) (Val))
+#   define YY_REINTERPRET_CAST(Type, Val) ((Type) (Val))
+#  endif
+# endif
+# ifndef YY_NULLPTR
+#  if defined __cplusplus
+#   if 201103L <= __cplusplus
+#    define YY_NULLPTR nullptr
+#   else
+#    define YY_NULLPTR 0
+#   endif
+#  else
+#   define YY_NULLPTR ((void*)0)
+#  endif
+# endif
 
 /* First part of user prologue.  */
 #line 1 "jucompiler.y"
@@ -2049,6 +2089,62 @@ yyreduce:
 #line 2050 "y.tab.c"
     break;
 
+  case 80: /* Expr2: Expr3  */
+#line 277 "jucompiler.y"
+                                                                                                                        {(yyval.node) = (yyvsp[0].node);}
+#line 2013 "y.tab.c"
+    break;
+
+  case 81: /* Expr2: ID  */
+#line 278 "jucompiler.y"
+                                                                            {(yyval.node) = create_node(node_id, (yyvsp[0].id), "Id");}
+#line 2019 "y.tab.c"
+    break;
+
+  case 82: /* Expr2: ID DOTLENGTH  */
+#line 279 "jucompiler.y"
+                                                                            {(yyval.node) = create_node(node_operators, "", "Length"); add_child((yyval.node), create_node(node_id, (yyvsp[-1].id), "Id"));}
+#line 2025 "y.tab.c"
+    break;
+
+  case 83: /* Expr2: Expr4  */
+#line 280 "jucompiler.y"
+                                                                                                                        {(yyval.node) = (yyvsp[0].node);}
+#line 2031 "y.tab.c"
+    break;
+
+  case 84: /* Expr3: MethodInvocation  */
+#line 283 "jucompiler.y"
+                                                                            {(yyval.node) = (yyvsp[0].node);}
+#line 2037 "y.tab.c"
+    break;
+
+  case 85: /* Expr3: ParseArgs  */
+#line 284 "jucompiler.y"
+                                                                            {(yyval.node) = (yyvsp[0].node);}
+#line 2043 "y.tab.c"
+    break;
+
+  case 86: /* Expr4: INTLIT  */
+#line 287 "jucompiler.y"
+                                                                            {(yyval.node) = create_node(node_terminals, (yyvsp[0].id), "DecLit");}
+#line 2049 "y.tab.c"
+    break;
+
+  case 87: /* Expr4: REALLIT  */
+#line 288 "jucompiler.y"
+                                                                            {(yyval.node) = create_node(node_terminals, (yyvsp[0].id), "RealLit");}
+#line 2055 "y.tab.c"
+    break;
+
+  case 88: /* Expr4: BOOLLIT  */
+#line 289 "jucompiler.y"
+                                                                            {(yyval.node) = create_node(node_terminals, (yyvsp[0].id), "BoolLit");}
+#line 2061 "y.tab.c"
+    break;
+
+
+#line 2065 "y.tab.c"
 
 #line 2054 "y.tab.c"
 
