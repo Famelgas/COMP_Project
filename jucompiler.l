@@ -16,6 +16,7 @@ ESCAPE                              \\t|\\n|\\f|\\r|\\\"|\\\\
 BOOLS				                "true"|"false"
 
 %{
+    #include <stdbool.h>
     #include "functions.h"
 	#include "y.tab.h"
 
