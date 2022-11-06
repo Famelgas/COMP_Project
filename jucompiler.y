@@ -71,10 +71,6 @@ FieldDecl:	PUBLIC STATIC Type ID FieldDecl2 SEMICOLON				        {$$ = create_no
 																		                add_next($$, aux1);
 																		                aux = aux->brother;
 																    	            }
-<<<<<<< HEAD
-=======
-															    		            free(aux);
->>>>>>> 7e1369869c88a24f9e8be2d8b882a0120beeee07
 																	            }
                                                                             }
 		|	error SEMICOLON											        {$$ = NULL; flag_error = 1;}
