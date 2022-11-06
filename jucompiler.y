@@ -1,7 +1,14 @@
 %{
+    /*
+    Miguel Filipe de Andrade Sergio 2020225643
+    Filipe David Amado Mendes 2020218797
+    */
+
     #include "functions.h"
     extern int flag;
     int flag_error = 0;
+    node_t root;
+    node_t aux;
 %}
 
 %union {
@@ -9,9 +16,7 @@
 	struct node * node;
 }
 
-
-
-%token LPAR BOOL DOUBLE INT VOID CLASS LBRACE ARROW ASSIGN RBRACE PARSEINT PUBLIC STATIC ELSE WHILE SEMICOLON RPAR STRING COMMA LSQ RSQ IF RETURN PRINT PLUS MINUS STAR DIV MOD AND OR XOR LSHIFT RSHIFT EQ GE GT LE LT NE NOT DOTLENGTH 
+%token LPAR BOOL DOUBLE INT VOID CLASS LBRACE ARROW ASSIGN RESERVED RBRACE PARSEINT PUBLIC STATIC ELSE WHILE SEMICOLON RPAR STRING COMMA LSQ RSQ IF RETURN PRINT PLUS MINUS STAR DIV MOD AND OR XOR LSHIFT RSHIFT EQ GE GT LE LT NE NOT DOTLENGTH 
 
 %token <id> ID
 %token <id> INTLIT
@@ -19,8 +24,9 @@
 %token <id> BOOLLIT
 %token <id> STRLIT
 
-%type <node> Program Program2 MethodDecl FieldDecl FieldDecl2 Type MethodHeader MethodHeader2 FormalParams FormalParams2 MethodBody MethodBody2 VarDecl VarDecl2 Statement Statement2 Statement3 Statement4 MethodInvocation MethodInvocation2 MethodInvocation3 Assignment ParseArgs Expr Expr2 Expr3 Expr4
+%type <node> Program Program2 MethodDecl FieldDecl FieldDecl2 Type MethodHeader MethodHeader2 FormalParams FormalParams2 MethodBody MethodBody2 VarDecl VarDecl2 Statement Statement2 Statement3 Statement4 MethodInvocation MethodInvocation2 MethodInvocation3 Assignment ParseArgs Expr Expr2 Expr3 Expr4 Expr5
 
+%right ASSIGN
 %left OR
 %left AND
 %left XOR
@@ -30,55 +36,57 @@
 %left PLUS MINUS
 %left STAR DIV MOD
 %left LPAR RPAR LSQ RSQ
-%right ASSIGN
-%right UNARY
+
+%right NOT
 %right ELSE
+%right UNARY
+
 
 %%
-Program: CLASS ID LBRACE Program2 RBRACE                                    {$$ = root = create_node(node_root, "", "Program");aux = create_node(node_id, $2, "Id"); add_child(root, aux); add_next(aux, $4);
-                                                                                if (flag && !flag_error) {
-                                                                                    print_tree($$, 0);
-                                                                                }
+
+Program:	CLASS ID LBRACE Program2 RBRACE					                {root = create_node(node_root, "", "Program"); aux = create_node(node_id, $2, "Id"); add_child(root, aux); add_next(aux, $4); $$ = root;
+																	            if (flag == 2 && flag_error == 0) {
+																		            print_tree($$, 0);
+																	            }
                                                                             }
-    ;       
+		;
 
-Program2: FieldDecl Program2                                                {$$ = $1; add_next($$, $2);}
-        | MethodDecl Program2   							                {$$ = $1; add_next($$, $2);}
-        | SEMICOLON Program2                                                {$$ = $2;}
-        | /* empty */                                                       {$$ = NULL;}
-    ;
+Program2:  MethodDecl Program2							                    {$$ = $1; add_next($$, $2);}
+			|	FieldDecl Program2								            {$$ = $1; add_next($$, $2);}
+			|	SEMICOLON Program2								            {$$ = $2;}
+            |	/* empty */											        {$$ = NULL;}
+			;
 
-MethodDecl: PUBLIC STATIC MethodHeader MethodBody                           {$$ = create_node(node_methods, "", "MethodDecl"); add_child($$, $3); add_next($3, $4);}     
-    ;
+MethodDecl:	PUBLIC STATIC MethodHeader MethodBody					        {$$ = create_node(node_methods, "", "MethodDecl"); add_child($$, $3); add_next($3, $4);}
+		;
 
-FieldDecl: PUBLIC STATIC Type ID FieldDecl2 SEMICOLON                       {$$ = create_node(node_var, "", "FieldDecl"); add_child($$, $3); add_next($3, create_node(node_id, $4, "Id"));
-                                                                                if ($5 != NULL){
-                                                                                    aux = $5;
-                                                                                    while (aux != NULL) {
-                                                                                        node_t aux1 = create_node(node_var, "", "FieldDecl");
-                                                                                        node_t aux2 = create_node($3->type, $3->value, $3->symbol);
-                                                                                        add_child(aux1, aux2);
-                                                                                        add_next(aux2, create_node(node_id, aux->value, "Id"));
-                                                                                        add_next($$, aux1);
-                                                                                        aux = aux->brother;
-                                                                                    }
-                                                                                    free(aux);
-                                                                                }
+FieldDecl:	PUBLIC STATIC Type ID FieldDecl2 SEMICOLON				        {$$ = create_node(node_var, "", "FieldDecl"); add_child($$, $3); add_next($3, create_node(node_id, $4, "Id"));
+																	            if ($5 != NULL){
+																		            aux = $5;
+																	    	        while (aux != NULL) {
+																		    	        node_t aux1 = create_node(node_var, "", "FieldDecl");
+																			            node_t aux2 = create_node($3->type, $3->value, $3->symbol);
+																			            add_child(aux1, aux2);
+																			            add_next(aux2, create_node(node_id, aux->value, "Id"));
+																		                add_next($$, aux1);
+																		                aux = aux->brother;
+																    	            }
+																	            }
                                                                             }
-        | error SEMICOLON                                                   {$$ = NULL; flag_error = 1;}
-    ;
+		|	error SEMICOLON											        {$$ = NULL; flag_error = 1;}
+		;
 
-FieldDecl2: COMMA ID FieldDecl2                                             {$$ = create_node(node_id, $2, "Id"); add_next($$, $3);}
-        | /* empty */                                                       {$$ = NULL;}
-    ;
+FieldDecl2:	COMMA ID FieldDecl2										        {$$ = create_node(node_id, $2, "Id"); add_next($$, $3);}
+        |   /* empty */												        {$$ = NULL;}
+		;
 
-Type:	BOOL														        {$$ = create_node(node_terminals, "", "Bool");}                                                
-    | DOUBLE                                                                {$$ = create_node(node_terminals, "", "Double");}               
-    | INT                                                                   {$$ = create_node(node_terminals, "", "Int");}  
-    ;
+Type:	BOOL														        {$$ = create_node(node_terminals, "", "Bool");}
+	|	INT															        {$$ = create_node(node_terminals, "", "Int");}
+	|	DOUBLE														        {$$ = create_node(node_terminals, "", "Double");}
+	;
     
 MethodHeader: Type ID LPAR MethodHeader2 RPAR						        {$$ = create_node(node_methods, "", "MethodHeader"); add_child($$,$1); add_next($1, create_node(node_id, $2, "Id"));aux = create_node(node_methods, "", "MethodParams"); add_next($1, aux); add_child(aux, $4);}                                            
-            | VOID ID LPAR MethodHeader2 RPAR						        {$$ = create_node(node_methods, "", "MethodHeader"); node_t aux2 = create_node(node_methods, "", "MethodParams"); add_next(aux, aux2); add_child(aux2, $4);}
+            | VOID ID LPAR MethodHeader2 RPAR						        {$$ = create_node(node_methods, "", "MethodHeader"); aux = create_node(node_terminals, "", "Void"); add_child($$, aux); add_next(aux, create_node(node_id, $2, "Id")); node_t aux2 = create_node(node_methods, "", "MethodParams"); add_next(aux, aux2); add_child(aux2, $4);}
     ;
 
 MethodHeader2:FormalParams										            {$$ = $1;}
@@ -98,7 +106,7 @@ MethodBody: LBRACE MethodBody2 RBRACE                                       {$$ 
 
 MethodBody2: Statement MethodBody2                                          {if ($1 != NULL){
 																		        $$ = $1;
-																		        add_child($$, $2);
+																		        add_next($$, $2);
 																		    }
 																	        else {
 																		        $$ = $2;
@@ -118,7 +126,6 @@ VarDecl: Type ID VarDecl2 SEMICOLON                                         {$$ 
 																			            add_next($$, aux1);
 																			            aux = aux->brother;
 																		            }
-																		            free(aux);
 																	            }
                                                                             }         
     ;
@@ -134,7 +141,8 @@ Statement:	LBRACE Statement2 RBRACE								        {if (count_children($2) > 1) 
                                                                             }
                                                                             else {
                                                                                 $$ = $2;
-                                                                            }}
+                                                                            }
+                                                                            }
         |	IF LPAR Expr RPAR Statement %prec ELSE        					{$$ = create_node(node_statements, "", "If");
                                                                                 add_child($$,$3);
                                                                                 aux = create_node(node_statements, "", "Block");
@@ -146,7 +154,8 @@ Statement:	LBRACE Statement2 RBRACE								        {if (count_children($2) > 1) 
                                                                                     add_next($3, aux);
                                                                                     add_child(aux, $5);
                                                                                     add_next(aux, create_node(node_statements, "", "Block"));
-                                                                            }}
+                                                                                }
+                                                                            }
         |	IF LPAR Expr RPAR Statement ELSE Statement				        {$$ = create_node(node_statements, "", "If");
                                                                             add_child($$,$3);
                                                                             aux = create_node(node_statements, "", "Block");
@@ -183,11 +192,15 @@ Statement:	LBRACE Statement2 RBRACE								        {if (count_children($2) > 1) 
                                                                                     add_child(aux, $5);
                                                                                 }
                                                                             }
-		|	RETURN Expr SEMICOLON								            {$$ = create_node(node_statements, "", "Return"); add_child($$, $2);}
+		|	RETURN Expr5 SEMICOLON								            {$$ = create_node(node_statements, "", "Return"); add_child($$, $2);}
 		|	Statement3 SEMICOLON									        {$$ = $1;}
 		|	PRINT LPAR Statement4 RPAR SEMICOLON                            {$$ = create_node(node_statements, "", "Print"); add_child($$, $3);}
 		|	error SEMICOLON											        {$$ = NULL; flag_error = 1;}
 		;
+
+Expr5:	Expr												    	        {$$ = $1;}
+		|    /* empty */												    {$$ = NULL;}
+        ;
 
 Statement2: Statement Statement2                                            {if ($1 != NULL) {
 																		        $$ = $1;
