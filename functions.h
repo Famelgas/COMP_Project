@@ -7,9 +7,6 @@
 #include <string.h>
 #include <stdarg.h>
 
-int yylex(void);
-void yyerror(const char *s);
-
 typedef enum {
     node_id,
     node_root,
@@ -32,8 +29,8 @@ typedef struct node {
     node_t brother;
 } node;
 
-node_t root;
-node_t aux;
+int yylex(void);
+void yyerror(const char *s);
 
 node_t create_node(node_type type, char *value, char *symbol);
 void add_child(node_t parent, node_t child); 

@@ -17,7 +17,6 @@ node_t create_node(node_type type, char *value, char *symbol){
     new->symbol = symbol;
     new->type = type;
 
-
     return new;
 }
 
@@ -25,16 +24,12 @@ node_t create_node(node_type type, char *value, char *symbol){
 // Adicionar filho
 
 void add_child(node_t parent, node_t child){
-    if (parent->child == NULL){
-        parent->child = child;
+    if (child == NULL){
+        return;
     }
-    else{
-        node_t last_child;
-        last_child = parent->child;
-        for (; last_child->brother != NULL; last_child = last_child->brother)
-            ;
-        last_child->brother = child;
-    }
+    parent->child = child;
+    parent->num_node++; 
+    child->parent = parent;   
 }
 
 // --------------------------------------------------------------------------------------------------------------------------
@@ -43,9 +38,16 @@ void add_child(node_t parent, node_t child){
 void add_next(node_t node, node_t next){
     if (node == NULL || next == NULL)
         return;
-    for (; node->child != NULL; node = node->child)
-        ;
-    node->child = next;
+    node_t aux;
+    aux = node;
+    while (aux->brother != NULL){
+        aux = aux->brother;
+    }
+    aux->brother = next;
+    if(node->parent != NULL){
+        next->parent = node->parent;
+        next->parent->num_node++;
+    }
 }
 
 // --------------------------------------------------------------------------------------------------------------------------
@@ -62,11 +64,11 @@ int count_children(node_t root){
 }
 
 void print_tree(node_t root, int points){
-    int i = 0;
-    node_t aux;
     if (root == NULL){
         return;
     }
+    int i = 0;
+    node_t aux;
     if (root->type == node_root){
         printf("%s\n", root->symbol);
     }
@@ -84,12 +86,8 @@ void print_tree(node_t root, int points){
     }
     aux = root->child;
     while (aux != NULL){
-        node_t aux_free;
-        aux_free = aux;
+        node_t aux_free = aux;
         print_tree(aux, points + 1);
         aux = aux->brother;
-        free(aux_free->value);
-        free(aux_free->symbol);
-        free(aux_free);
     }
 }
