@@ -8,6 +8,7 @@ class Teste {
     ;;;;;;;;;;
 
     public static int getNumero() {
+        {
         while (preco < 100000) {
             preco = a + b + c;
             a = a + 1;

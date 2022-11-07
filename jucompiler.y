@@ -1,7 +1,7 @@
 %{
     /*
-    Miguel Filipe de Andrade Sergio 2020225643
-    Filipe David Amado Mendes 2020218797
+        Miguel Filipe de Andrade Sergio 2020225643
+        Filipe David Amado Mendes 2020218797
     */
 
     #include "functions.h"
@@ -42,11 +42,8 @@
 
 %%
 
-Program:	CLASS ID LBRACE Program2 RBRACE					                {root = create_node(node_root, "", "Program"); aux = create_node(node_id, $2, "Id"); add_child(root, aux); add_next(aux, $4); $$ = root;
-																	            if (flag == 2 && flag_error == 0) {
-																		            print_tree($$, 0);
-																	            }
-                                                                            }
+Program:	CLASS ID LBRACE Program2 RBRACE					                {root = create_node(node_root, "", "Program"); aux = create_node(node_id, $2, "Id"); add_child(root, aux); add_next(aux, $4); $$ = root;}
+        |   CLASS ID LBRACE Program2 RBRACE error                           {$$ = NULL; flag_error = 1;} 
 		;
 
 Program2:  MethodDecl Program2							                    {$$ = $1; add_next($$, $2);}

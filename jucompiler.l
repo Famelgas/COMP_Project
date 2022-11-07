@@ -25,7 +25,6 @@ BOOLS				                "true"|"false"
     int buffer_flag = 0; 
 	int flag = 0;
 	extern int flag_error;
-
 	extern node_t root;
 
 	int yyparse(void);
@@ -145,7 +144,8 @@ int yywrap() {
 }
 
 void yyerror(const char *s) { 
-     printf ("Line %d, col %d: %s: %s\n", line, (int)(column-strlen(yytext)), s, yytext);
+    printf ("Line %d, col %d: %s: %s\n", line, (int)(column-strlen(yytext)), s, yytext);
+	flag_error = 1;
 }
 
 
@@ -159,6 +159,9 @@ int main(int argc, char *argv[]) {
 			// análise lexical, análise sintatica e PRINT TREE
 			flag = 2;
 			yyparse();
+			if(flag == 2 && flag_error == 0) {
+				print_tree(root, 0);
+			}
 		}
 		else if (strcmp(argv[1], "-e1") == 0) {
 			flag = 0;
@@ -172,5 +175,11 @@ int main(int argc, char *argv[]) {
 			yyparse();
 			yylex();
 		}
+	}
+	else {
+		flag = 0;
+		flag_error = 1;
+		yyparse();
+		yylex();
 	}
 }
