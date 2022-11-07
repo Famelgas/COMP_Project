@@ -100,8 +100,8 @@ extern int yydebug;
     ID = 301,                      /* ID  */
     INTLIT = 302,                  /* INTLIT  */
     REALLIT = 303,                 /* REALLIT  */
-    BOOLLIT = 304,                 /* BOOLLIT  */
-    STRLIT = 305,                  /* STRLIT  */
+    STRLIT = 304,                  /* STRLIT  */
+    BOOLLIT = 305,                 /* BOOLLIT  */
     UNARY = 306                    /* UNARY  */
   };
   typedef enum yytokentype yytoken_kind_t;
@@ -157,8 +157,8 @@ extern int yydebug;
 #define ID 301
 #define INTLIT 302
 #define REALLIT 303
-#define BOOLLIT 304
-#define STRLIT 305
+#define STRLIT 304
+#define BOOLLIT 305
 #define UNARY 306
 
 /* Value type.  */

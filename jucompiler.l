@@ -41,13 +41,13 @@ BOOLS				                "true"|"false"
 <MULTPLECOMM>"*/"                   {column += yyleng; BEGIN 0;}
 <MULTPLECOMM>{NEWLINE}              {line++; column = 1;}
 <MULTPLECOMM>.                      {column += yyleng;}
-<MULTPLECOMM><<EOF>>                {BEGIN 0; printf("Line %d, col %d: unterminated comment\n", line_aux, column_aux);}
+<MULTPLECOMM><<EOF>>                {BEGIN 0;printf("Line %d, col %d: unterminated comment\n", line_aux, column_aux);}
 
 
 \"									{BEGIN SLIT; buffer[0]=0; strcat(buffer, yytext); line_aux = line; column_aux = column; column+=yyleng; buffer_flag = 0;}
 <SLIT>{STRLIT}						{column+=yyleng; strcat(buffer, yytext);}
 <SLIT>\\(.?)						{strcat(buffer, yytext);printf("Line %d, col %d: invalid escape sequence (%s)\n",line,column,yytext); column += yyleng; buffer_flag = 1;}
-<SLIT>\n|\r|(\r\n)					{BEGIN 0; buffer[0] = 0; printf("Line %d, col %d: unterminated string literal\n",line_aux,column_aux); line++; column = 1;}
+<SLIT>{NEWLINE}						{BEGIN 0; buffer[0] = 0; printf("Line %d, col %d: unterminated string literal\n",line_aux,column_aux); line++; column = 1;}
 <SLIT>\"							{BEGIN 0; strcat(buffer, yytext); if(flag == 1 && buffer_flag==0)printf("STRLIT(%s)\n",buffer);column+=yyleng;
 										if(flag != 1 && buffer_flag == 0) {
 											yylval.id = strdup(buffer);

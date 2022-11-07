@@ -21,10 +21,11 @@
 %token <id> ID
 %token <id> INTLIT
 %token <id> REALLIT
-%token <id> BOOLLIT
 %token <id> STRLIT
+%token <id> BOOLLIT
 
 %type <node> Program Program2 MethodDecl FieldDecl FieldDecl2 Type MethodHeader MethodHeader2 FormalParams FormalParams2 MethodBody MethodBody2 VarDecl VarDecl2 Statement Statement2 Statement3 Statement4 MethodInvocation MethodInvocation2 MethodInvocation3 Assignment ParseArgs Expr Expr2 Expr3 Expr4 Expr5
+
 
 %right ASSIGN
 %left OR
@@ -39,7 +40,6 @@
 %left LPAR RPAR LSQ RSQ
 %right ELSE
 %right UNARY
-
 
 %%
 
@@ -207,7 +207,8 @@ Statement2: Statement Statement2                                            {if 
                                                                             }
                                                                             else {
                                                                                 $$ = $2;
-                                                                            }}
+                                                                            }
+                                                                            }
         |   /* empty */                                                     {$$ = NULL;}
     ;
 
