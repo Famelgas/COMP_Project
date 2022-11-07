@@ -16,7 +16,6 @@ ESCAPE                              \\t|\\n|\\f|\\r|\\\"|\\\\
 BOOLS				                "true"|"false"
 
 %{
-    #include <stdbool.h>
     #include "functions.h"
 	#include "y.tab.h"
 
@@ -42,7 +41,7 @@ BOOLS				                "true"|"false"
 <MULTPLECOMM>"*/"                   {column += yyleng; BEGIN 0;}
 <MULTPLECOMM>{NEWLINE}              {line++; column = 1;}
 <MULTPLECOMM>.                      {column += yyleng;}
-<MULTPLECOMM><<EOF>>                {printf("Line %d, col %d: unterminated comment\n", line_aux, column_aux);}
+<MULTPLECOMM><<EOF>>                {BEGIN 0; printf("Line %d, col %d: unterminated comment\n", line_aux, column_aux);}
 
 
 \"									{BEGIN SLIT; buffer[0]=0; strcat(buffer, yytext); line_aux = line; column_aux = column; column+=yyleng; buffer_flag = 0;}
@@ -134,6 +133,7 @@ BOOLS				                "true"|"false"
 										}
 									}
 .                                   {printf("Line %d, col %d: illegal character (%s)\n", line, column, yytext); column += yyleng; }
+<<EOF>>                             {column = 1; exit(0);}
 
 %%
 
