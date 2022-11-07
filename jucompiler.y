@@ -26,20 +26,20 @@
 
 %type <node> Program Program2 MethodDecl FieldDecl FieldDecl2 Type MethodHeader MethodHeader2 FormalParams FormalParams2 MethodBody MethodBody2 VarDecl VarDecl2 Statement Statement2 Statement3 Statement4 MethodInvocation MethodInvocation2 MethodInvocation3 Assignment ParseArgs Expr Expr2 Expr3 Expr4 Expr5
 
+
+%right ASSIGN
 %left OR
 %left AND
 %left XOR
 %left EQ NE
-%left PLUS MINUS
-%left STAR DIV MOD
 %left GE GT LE LT
 %left LSHIFT RSHIFT
-%left LPAR RPAR LSQ RSQ
-%right ASSIGN
-%right ELSE
+%left PLUS MINUS
+%left STAR DIV MOD
 %right NOT
+%left LPAR RPAR LSQ RSQ
+%right ELSE
 %right UNARY
-
 
 %%
 

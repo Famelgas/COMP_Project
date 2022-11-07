@@ -1174,7 +1174,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case YY_STATE_EOF(MULTPLECOMM):
 #line 44 "jucompiler.l"
-{BEGIN 0; printf("Line %d, col %d: unterminated comment\n", line_aux, column_aux);}
+{BEGIN 0;printf("Line %d, col %d: unterminated comment\n", line_aux, column_aux);}
 	YY_BREAK
 case 8:
 YY_RULE_SETUP
@@ -1450,7 +1450,7 @@ YY_RULE_SETUP
 case 59:
 YY_RULE_SETUP
 #line 114 "jucompiler.l"
-{column += yyleng;}
+{column += yyleng; }
 	YY_BREAK
 case 60:
 /* rule 60 can match eol */

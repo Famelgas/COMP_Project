@@ -41,7 +41,7 @@ BOOLS				                "true"|"false"
 <MULTPLECOMM>"*/"                   {column += yyleng; BEGIN 0;}
 <MULTPLECOMM>{NEWLINE}              {line++; column = 1;}
 <MULTPLECOMM>.                      {column += yyleng;}
-<MULTPLECOMM><<EOF>>                {BEGIN 0; printf("Line %d, col %d: unterminated comment\n", line_aux, column_aux);}
+<MULTPLECOMM><<EOF>>                {BEGIN 0;printf("Line %d, col %d: unterminated comment\n", line_aux, column_aux);}
 
 
 \"									{BEGIN SLIT; buffer[0]=0; strcat(buffer, yytext); line_aux = line; column_aux = column; column+=yyleng; buffer_flag = 0;}
@@ -111,7 +111,7 @@ BOOLS				                "true"|"false"
 
 "\t" 								{column+=yyleng;}
 " "									{column+=yyleng;}
-"\f"                                {column += yyleng;}
+"\f"                                {column += yyleng; }
 {NEWLINE}                           {line++; column = 1;}
 
 {ID}                                {if(flag == 1)printf("ID(%s)\n",yytext);column+=yyleng;
