@@ -47,7 +47,7 @@ BOOLS				                "true"|"false"
 \"									{BEGIN SLIT; buffer[0]=0; strcat(buffer, yytext); line_aux = line; column_aux = column; column+=yyleng; buffer_flag = 0;}
 <SLIT>{STRLIT}						{column+=yyleng; strcat(buffer, yytext);}
 <SLIT>\\(.?)						{strcat(buffer, yytext);printf("Line %d, col %d: invalid escape sequence (%s)\n",line,column,yytext); column += yyleng; buffer_flag = 1;}
-<SLIT>\n|\r|(\r\n)					{BEGIN 0; buffer[0] = 0; printf("Line %d, col %d: unterminated string literal\n",line_aux,column_aux); line++; column = 1;}
+<SLIT>{NEWLINE}						{BEGIN 0; buffer[0] = 0; printf("Line %d, col %d: unterminated string literal\n",line_aux,column_aux); line++; column = 1;}
 <SLIT>\"							{BEGIN 0; strcat(buffer, yytext); if(flag == 1 && buffer_flag==0)printf("STRLIT(%s)\n",buffer);column+=yyleng;
 										if(flag != 1 && buffer_flag == 0) {
 											yylval.id = strdup(buffer);
@@ -111,7 +111,7 @@ BOOLS				                "true"|"false"
 
 "\t" 								{column+=yyleng;}
 " "									{column+=yyleng;}
-"\f"                                {column += yyleng; }
+"\f"                                {column += yyleng;}
 {NEWLINE}                           {line++; column = 1;}
 
 {ID}                                {if(flag == 1)printf("ID(%s)\n",yytext);column+=yyleng;

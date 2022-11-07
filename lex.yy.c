@@ -1450,7 +1450,7 @@ YY_RULE_SETUP
 case 59:
 YY_RULE_SETUP
 #line 114 "jucompiler.l"
-{column += yyleng; }
+{column += yyleng;}
 	YY_BREAK
 case 60:
 /* rule 60 can match eol */
