@@ -19,7 +19,8 @@ typedef enum
 
 typedef struct node *node_t;
 
-typedef struct node{
+typedef struct node
+{
     char *value;
     char *symbol;
     node_type type;

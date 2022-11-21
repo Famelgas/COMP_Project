@@ -26,6 +26,8 @@ BOOLS				                "true"|"false"
 	int flag = 0;
 	extern int flag_error;
 
+	extern node_t root;
+
 	int yyparse(void);
 %}
 
@@ -55,7 +57,7 @@ BOOLS				                "true"|"false"
 											return STRLIT;
 										}
 									}
-<SLIT><<EOF>>						{BEGIN 0; buffer[0] = 0; printf("Line %d, col %d: unterminated string literal\n",line_aux,column_aux); line++; column = 1;}
+<SLIT><<EOF>>						{column=1; printf("Line %d, col %d: unterminated string literal\n",line_aux,column_aux); column+=yyleng; BEGIN 0; buffer[0] = 0; return 0;}
 
 "&&"       	                        {if (flag == 1) printf("AND\n"); column += yyleng; if(flag != 1) return AND; }
 "="         	                    {if (flag == 1) printf("ASSIGN\n"); column += yyleng; if(flag != 1) return ASSIGN;}

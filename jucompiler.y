@@ -36,10 +36,9 @@
 %left LSHIFT RSHIFT
 %left PLUS MINUS
 %left STAR DIV MOD
-%right NOT
+%right NOT UNARY
 %left LPAR RPAR LSQ RSQ
-%right ELSE
-%right UNARY
+%nonassoc ELSE IF
 
 %%
 
@@ -143,7 +142,7 @@ Statement:	LBRACE Statement2 RBRACE								        {if (count_children($2) > 1) 
                                                                             else {
                                                                                 $$ = $2;
                                                                             }}
-        |	IF LPAR Expr RPAR Statement %prec ELSE        					{$$ = create_node(node_statements, "", "If");
+        |	IF LPAR Expr RPAR Statement                   					{$$ = create_node(node_statements, "", "If");
                                                                                 add_child($$,$3);
                                                                                 aux = create_node(node_statements, "", "Block");
                                                                                 if (count_children($5) == 1 && $5 != NULL) {
@@ -269,9 +268,9 @@ Expr2: Expr2 PLUS Expr2                                                     {$$ 
         | Expr2 LE Expr2                                                    {$$ = create_node(node_operators, "", "Le"); add_child($$, $1); add_next($1, $3);}
         | Expr2 LT Expr2                                                    {$$ = create_node(node_operators, "", "Lt"); add_child($$, $1); add_next($1, $3);}
         | Expr2 NE Expr2                                                    {$$ = create_node(node_operators, "", "Ne"); add_child($$, $1); add_next($1, $3);}
-        | MINUS Expr2 %prec UNARY                                             {$$ = create_node(node_operators, "", "Minus"); add_child($$, $2);}  
-        | PLUS Expr2 %prec UNARY                                              {$$ = create_node(node_operators, "", "Plus"); add_child($$, $2);}
-        | NOT Expr2 %prec UNARY                                                        {$$ = create_node(node_operators, "", "Not"); add_child($$, $2);}
+        | MINUS Expr2 %prec UNARY                                           {$$ = create_node(node_operators, "", "Minus"); add_child($$, $2);}  
+        | PLUS Expr2 %prec UNARY                                            {$$ = create_node(node_operators, "", "Plus"); add_child($$, $2);}
+        | NOT Expr2 %prec UNARY                                             {$$ = create_node(node_operators, "", "Not"); add_child($$, $2);}
         | LPAR Expr RPAR                                                    {$$ = $2;}
         | LPAR error RPAR                                                   {$$ = NULL; flag_error = 1;}
         | Expr3												                {$$ = $1;}
