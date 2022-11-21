@@ -5,6 +5,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include <stdarg.h>
+#include <stdbool.h>
 
 typedef enum
 {
@@ -17,26 +18,26 @@ typedef enum
     node_terminals
 } node_type;
 
-typedef struct node *node_t;
-
-typedef struct node
+typedef struct Node
 {
     char *value;
     char *symbol;
+    struct Node *parent;
+    struct Node *child;
+    struct Node *brother;
     node_type type;
-    int num_node;
-    node_t parent;
-    node_t child;
-    node_t brother;
-} node;
+    char *type_anoted; 
+} Node;
 
 int yylex(void);
 void yyerror(const char *s);
 
-node_t create_node(node_type type, char *value, char *symbol);
-void add_child(node_t parent, node_t child);
-void add_next(node_t node, node_t next);
-int count_children(node_t root);
-void print_tree(node_t root, int points);
+Node *create_node(node_type type, char *value, char *symbol);
+void add_child(Node* parent, Node* child);
+void add_next(Node* no, Node *next);
+int count_children(Node *root);
+void print_tree(Node *root, int points);
+void freeTree(Node *root);
+void print_tree_anotated(Node *root, int points);
 
 #endif

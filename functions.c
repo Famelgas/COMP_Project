@@ -2,21 +2,17 @@
 
 // --------------------------------------------------------------------------------------------------------------------------
 
-node_t create_node(node_type type, char *value, char *symbol)
-{
+Node *create_node(node_type type, char *value, char *symbol){
 
-    node_t new = malloc(sizeof(node_t));
-    new->symbol = (char *)malloc(1 + strlen(symbol) * sizeof(char));
-    new->value = (char *)malloc(1 + strlen(value) * sizeof(char));
+    Node *new = (Node *) malloc(sizeof(Node));
 
-    strcpy(new->symbol, symbol);
+    new->symbol = symbol;
+    new->value = value;
     new->parent = NULL;
     new->child = NULL;
     new->brother = NULL;
-    new->num_node = 0;
-    strcpy(new->value, value);
-    new->symbol = symbol;
     new->type = type;
+    new->type_anoted = "";
 
     return new;
 }
@@ -24,86 +20,93 @@ node_t create_node(node_type type, char *value, char *symbol)
 // --------------------------------------------------------------------------------------------------------------------------
 // Adicionar filho
 
-void add_child(node_t parent, node_t child)
-{
-    if (child == NULL)
-    {
+void add_child(Node* parent, Node* child){
+    if (child == NULL){
         return;
     }
     parent->child = child;
-    parent->num_node++;
     child->parent = parent;
 }
 
 // --------------------------------------------------------------------------------------------------------------------------
 // Adicionar irmão
 
-void add_next(node_t node, node_t next)
-{
+void add_next(Node* node, Node* next){
     if (node == NULL || next == NULL)
         return;
-    node_t aux;
+    Node* aux;
     aux = node;
-    while (aux->brother != NULL)
-    {
+    while (aux->brother != NULL){
         aux = aux->brother;
     }
     aux->brother = next;
-    if (node->parent != NULL)
-    {
+    if (node->parent != NULL){
         next->parent = node->parent;
-        next->parent->num_node++;
     }
 }
 
 // --------------------------------------------------------------------------------------------------------------------------
 
-int count_children(node_t root)
-{
+int count_children(Node* root){
     int count = 0;
-    node_t aux;
+    Node* aux;
     aux = root;
-    while (aux != NULL)
-    {
+    while (aux != NULL){
         aux = aux->brother;
         count++;
     }
     return count;
 }
 
-void print_tree(node_t root, int points)
-{
-    if (root == NULL)
-    {
+
+void print_tree(Node * root, int points){
+    if (root == NULL)    {
         return;
     }
     int i = 0;
-    node_t aux;
-    if (root->type == node_root)
-    {
+    while (i < points){
+        printf("..");
+        i++;
+    }
+    if (strcmp(root->value, "") != 0)   {
+        printf("%s(%s)\n", root->symbol, root->value);
+    }
+    else{
         printf("%s\n", root->symbol);
     }
-    else
-    {
-        while (i < points)
-        {
-            printf("..");
-            i++;
-        }
-        if (strcmp(root->value, "") != 0)
-        {
-            printf("%s(%s)\n", root->symbol, root->value);
-        }
-        else
-        {
-            printf("%s\n", root->symbol);
-        }
+
+    if(root->child != NULL){
+        print_tree(root->child, points + 1);
     }
-    aux = root->child;
-    while (aux != NULL)
-    {
-        node_t aux_free = aux;
-        print_tree(aux, points + 1);
-        aux = aux->brother;
+    if(root->brother != NULL){
+        print_tree(root->brother, points);
     }
+
+    free(root);
+}
+
+void print_tree_anotated(Node *root, int points){
+    if (root == NULL){
+        return;
+    }
+    int i = 0;
+    while (i < points){
+        printf("..");
+        i++;
+    }
+    if (strcmp(root->value, "") != 0){
+        printf("%s(%s)%s\n", root->symbol, root->value, root->type_anoted);
+    }
+    else{
+        printf("%s%s\n", root->symbol, root->type_anoted);
+    }
+
+    if (root->child != NULL){
+        print_tree_anotated(root->child, points + 1);
+    }
+    if (root->brother != NULL){
+        print_tree_anotated(root->brother, points);
+    }
+
+    free(root);
 }
