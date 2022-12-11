@@ -167,8 +167,8 @@ union YYSTYPE
 {
 #line 16 "jucompiler.y"
 
-	struct token *token;
-	struct Node *no;
+	struct token *token; //Token struct defined in functions.h
+	struct Node *no; //Node struct defined in functions.h
 
 #line 174 "y.tab.h"
 
